@@ -218,3 +218,25 @@ func TestBacktrack_Unsolvable(t *testing.T) {
 	assert.Equal(t, actualSolved, false)
 	fmt.Print("TIME: ", end.Sub(start), "\n")
 }
+
+// This is a dummy test which one can fill in to get hints.
+func Test_HintHelper(t *testing.T) {
+	partial := sudokusolver.Grid{
+		{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0},
+	}
+	filled, solved := sudokusolver.Backtrack(partial)
+	if !solved {
+		t.Fatalf("grid is not solvable")
+	}
+
+	move := sudokusolver.Hint(partial, filled)
+	fmt.Printf("Hint: Set (%d,%d) to %d\n", move.Row+1, move.Col+1, move.Value)
+}
