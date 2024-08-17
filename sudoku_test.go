@@ -1,7 +1,9 @@
 package sudokusolver_test
 
 import (
+	"fmt"
 	"testing"
+	"time"
 
 	sudokusolver "github.com/liampulles/sudoku-solver"
 	"github.com/stretchr/testify/assert"
@@ -228,8 +230,11 @@ func TestGrid_Valid(t *testing.T) {
 }
 
 func TestBacktrack_Solvable(t *testing.T) {
+	start := time.Now()
 	actualGrid, actualSolved := sudokusolver.Backtrack(partial)
+	end := time.Now()
 
 	assert.Equal(t, actualGrid, filled)
 	assert.Equal(t, actualSolved, true)
+	fmt.Print("TIME: ", end.Sub(start), "\n")
 }

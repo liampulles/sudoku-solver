@@ -11,42 +11,22 @@ import (
 // From 0 to 9 (0 meaning unset).
 type Cell uint8
 
-// Could be a row, column, or box.
-type CellGroup [9]Cell
-
-// Should not have duplicates of cells 1 to 9.
-func (c CellGroup) Valid() bool {
-	var numSeen [10]bool
-	for _, cell := range c {
-		if cell == 0 {
-			continue
-		}
-
-		if numSeen[cell] {
-			return false
-		}
-
-		numSeen[cell] = true
-	}
-	return true
-}
-
 // 1st index is row, 2nd index is column.
-type Grid [9]CellGroup
+type Grid [9][9]Cell
 
 // E.g.
 //
-// 53_#_7_#___
-// 6__#195#___
-// _98#___#_6_
-// ###########
-// 8__#_6_#__3
-// 4__#8_3#__1
-// 7__#_2_#__6
-// ###########
-// _6_#___#23_
-// ___#419#__5
-// ___#_8_#_79
+// 5 3 _ # _ 7 _ # _ _ _
+// 6 _ _ # 1 9 5 # _ _ _
+// _ 9 8 # _ _ _ # _ 6 _
+// #####################
+// 8 _ _ # _ 6 _ # _ _ 3
+// 4 _ _ # 8 _ 3 # _ _ 1
+// 7 _ _ # _ 2 _ # _ _ 6
+// #####################
+// _ 6 _ # _ _ _ # 2 8 _
+// _ _ _ # 4 1 9 # _ _ 5
+// _ _ _ # _ 8 _ # _ 7 9
 func (g Grid) String() string {
 	var w strings.Builder
 	for row, rowCells := range g {
@@ -72,66 +52,46 @@ func (g Grid) String() string {
 }
 
 // Must pass row, column, and box constraints.
+// This won't confirm if the grid is solvable.
 func (g Grid) Valid() bool {
-	// Check row constraint
-	for _, row := range g.Rows() {
-		if !row.Valid() {
-			return false
-		}
-	}
+	var numsSeenByRow [9][10]bool
+	var numsSeenByCol [9][10]bool
+	var numsSeenByBox [9][10]bool
 
-	// Check column constraints
-	for _, col := range g.Columns() {
-		if !col.Valid() {
-			return false
-		}
-	}
+	for row, rowCells := range g {
+		for col, cell := range rowCells {
+			// Empty cells are always valid
+			if cell == 0 {
+				continue
+			}
 
-	// Check box constraints
-	for _, box := range g.Boxes() {
-		if !box.Valid() {
-			return false
+			// Check row
+			if numsSeenByRow[row][cell] {
+				return false
+			}
+
+			// Check column
+			if numsSeenByCol[col][cell] {
+				return false
+			}
+
+			// Check box
+			// -> Which box is it?
+			boxRow, boxCol := row/3, col/3
+			box := (boxCol * 3) + boxRow
+			// -> Ok check now
+			if numsSeenByBox[box][cell] {
+				return false
+			}
+
+			// Ok, mark and continue
+			numsSeenByRow[row][cell] = true
+			numsSeenByCol[col][cell] = true
+			numsSeenByBox[box][cell] = true
 		}
 	}
 
 	return true
-}
-
-func (g Grid) Rows() [9]CellGroup {
-	return g
-}
-
-// Effectively transposes the grid.
-func (g Grid) Columns() [9]CellGroup {
-	var columns [9]CellGroup
-	g.Loop(func(row, col int, cell Cell) {
-		columns[col][row] = cell
-	})
-	return columns
-}
-
-func (g Grid) Boxes() [9]CellGroup {
-	var boxes [9]CellGroup
-	g.Loop(func(row, col int, cell Cell) {
-		// Which box is it?
-		boxRow, boxCol := row/3, col/3
-		box := (boxCol * 3) + boxRow
-
-		// Which item in the box is it?
-		posRow, posCol := row-(boxRow*3), col-(boxCol*3)
-		pos := (posCol * 3) + posRow
-
-		boxes[box][pos] = cell
-	})
-	return boxes
-}
-
-func (g Grid) Loop(fn func(row, col int, cell Cell)) {
-	for row, rowCells := range g {
-		for col, cell := range rowCells {
-			fn(row, col, cell)
-		}
-	}
 }
 
 // ---
