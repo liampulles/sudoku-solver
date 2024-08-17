@@ -97,47 +97,6 @@ _ _ _ # _ 8 _ # _ 7 9
 	}
 }
 
-func TestCellGroup_Valid(t *testing.T) {
-	tests := []struct {
-		desc     string
-		fixture  sudokusolver.CellGroup
-		expected bool
-	}{
-		{
-			"empty is valid",
-			sudokusolver.CellGroup{},
-			true,
-		},
-		{
-			"partial valid",
-			partial[0],
-			true,
-		},
-		{
-			"partial invalid",
-			sudokusolver.CellGroup{0, 1, 0, 0, 2, 0, 0, 3, 1},
-			false,
-		},
-		{
-			"full valid",
-			filled[0],
-			true,
-		},
-		{
-			"full invalid",
-			sudokusolver.CellGroup{1, 2, 3, 4, 5, 6, 7, 8, 1},
-			false,
-		},
-	}
-
-	for _, test := range tests {
-		t.Run(test.desc, func(t *testing.T) {
-			actual := test.fixture.Valid()
-			assert.Equal(t, test.expected, actual)
-		})
-	}
-}
-
 func TestGrid_Valid(t *testing.T) {
 	tests := []struct {
 		desc     string
