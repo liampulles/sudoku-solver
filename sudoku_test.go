@@ -236,6 +236,7 @@ func Test_HintHelper(t *testing.T) {
 	if !solved {
 		t.Fatalf("grid is not solvable")
 	}
+	// fmt.Println(filled)
 
 	move := sudokusolver.Hint(partial, filled)
 	fmt.Printf("Hint: Set (%d,%d) to %d\n", move.Row+1, move.Col+1, move.Value)
