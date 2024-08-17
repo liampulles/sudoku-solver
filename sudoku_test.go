@@ -33,6 +33,18 @@ var filled = sudokusolver.Grid{
 	{3, 4, 5, 2, 8, 6, 1, 7, 9},
 }
 
+var unsolvable = sudokusolver.Grid{
+	{1, 2, 3, 0, 0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 4, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0, 0, 0, 0, 4},
+	{0, 0, 0, 0, 0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0, 0, 0, 0, 0},
+}
+
 func TestGrid_String(t *testing.T) {
 	tests := []struct {
 		desc     string
@@ -195,5 +207,14 @@ func TestBacktrack_Solvable(t *testing.T) {
 
 	assert.Equal(t, actualGrid, filled)
 	assert.Equal(t, actualSolved, true)
+	fmt.Print("TIME: ", end.Sub(start), "\n")
+}
+
+func TestBacktrack_Unsolvable(t *testing.T) {
+	start := time.Now()
+	_, actualSolved := sudokusolver.Backtrack(unsolvable)
+	end := time.Now()
+
+	assert.Equal(t, actualSolved, false)
 	fmt.Print("TIME: ", end.Sub(start), "\n")
 }
